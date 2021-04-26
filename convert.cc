@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <cmath>
 
@@ -8,9 +9,28 @@
 #include "TTree.h"
 
 int main(int argc, char **argv) {
-    TFile *file = new TFile("../SingleMu.root", "READ");
+
+    if (argc < 3 || argc > 4) {
+        std::cout
+            << "usage:\n\t"
+            << argv[0]
+            << " <in_file> <out_file> [<nEvents>]"
+            << std::endl;
+        return -1;
+    }
+
+    size_t N = std::numeric_limits<size_t>::max();
+
+    if (argc == 4) {
+        N = std::atoi(argv[3]);
+    }
+
+    std::ofstream outfile;
+    outfile.open(argv[2]);
+
+    TFile *infile = new TFile(argv[1], "READ");
     TDirectoryFile *dir;
-    file->GetObject("aod2microtuple", dir);
+    infile->GetObject("aod2microtuple", dir);
     TTree *Events;
     dir->GetObject("Events", Events);
 
@@ -57,14 +77,14 @@ int main(int argc, char **argv) {
 
     
 
-    for (size_t i = 0; i < std::min<size_t>(1, Events->GetEntries()); i++) {
+    for (size_t i = 0; i < std::min<size_t>(N, Events->GetEntries()); i++) {
         Events->GetEntry(i);
 
         size_t j = 0;
-        std::cout << j++ << ' ' << i+1 << " 0" << std::endl;
+        outfile << j++ << ' ' << i+1 << " 0" << std::endl;
 
         for (size_t k = 0; k < nElectron; k++) {
-            std::cout << j++ << ' '
+            outfile << j++ << ' '
                 << 1 << ' '
                 << Electron_eta[k] << ' '
                 << Electron_phi[k] << ' '
@@ -79,7 +99,7 @@ int main(int argc, char **argv) {
         }
 
         for (size_t k = 0; k < nMuon; k++) {
-            std::cout << j++ << ' '
+            outfile << j++ << ' '
                 << 2 << ' '
                 << Muon_eta[k] << ' '
                 << Muon_phi[k] << ' '
@@ -94,7 +114,7 @@ int main(int argc, char **argv) {
         }
 
         for (size_t k = 0; k < nJet; k++) {
-            std::cout << j++ << ' '
+            outfile << j++ << ' '
                 << 4 << ' '
                 << Jet_eta[k] << ' '
                 << Jet_phi[k] << ' '
@@ -108,7 +128,7 @@ int main(int argc, char **argv) {
                 << std::endl;
         }
         
-        std::cout << j++ << ' '
+        outfile << j++ << ' '
                 << 6 << ' '
                 << 0.0f << ' '
                 << MET_phi << ' '
@@ -138,6 +158,7 @@ int main(int argc, char **argv) {
     delete Jet_mass;
     delete Jet_btag;
 
-    file->Close();
+    infile->Close();
+    outfile.close();
     return 0;
 }
