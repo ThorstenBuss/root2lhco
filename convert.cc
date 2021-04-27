@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <cmath>
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -19,12 +18,6 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    size_t N = std::numeric_limits<size_t>::max();
-
-    if (argc == 4) {
-        N = std::atoi(argv[3]);
-    }
-
     std::ofstream outfile;
     outfile.open(argv[2]);
 
@@ -33,6 +26,12 @@ int main(int argc, char **argv) {
     infile->GetObject("aod2microtuple", dir);
     TTree *Events;
     dir->GetObject("Events", Events);
+
+    size_t N = Events->GetEntries();
+
+    if (argc == 4) {
+        N = std::atoi(argv[3]);
+    }
 
     UInt_t nElectron;
     Events->SetBranchAddress("nElectron", &nElectron);
@@ -77,7 +76,7 @@ int main(int argc, char **argv) {
 
     
 
-    for (size_t i = 0; i < std::min<size_t>(N, Events->GetEntries()); i++) {
+    for (size_t i = 0; i < N; i++) {
         Events->GetEntry(i);
 
         size_t j = 0;
@@ -121,7 +120,7 @@ int main(int argc, char **argv) {
                 << Jet_pt[k] << ' '
                 << Jet_mass[k] << ' '
                 << 0.0f << ' '
-                << 0 << ' ' // !!!
+                << (Jet_btag[i]>0.75? 1: 0) << ' '
                 << 0.0f << ' '
                 << 0.0f << ' '
                 << 0.0f << ' '
@@ -140,6 +139,10 @@ int main(int argc, char **argv) {
             << 0.0f << ' '
             << 0.0f << ' '
             << std::endl;
+        
+        if ((i+1) % 100000 == 0) {
+            std::cout << (i+1.0)*100.0/N << " %" << std::endl;
+        }
     }
 
     delete Electron_pt;
@@ -160,5 +163,7 @@ int main(int argc, char **argv) {
 
     infile->Close();
     outfile.close();
+
+    std::cout << "Done!" << std::endl;
     return 0;
 }
