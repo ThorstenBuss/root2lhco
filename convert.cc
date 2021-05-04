@@ -2,9 +2,7 @@
 #include <fstream>
 #include <cstdlib>
 
-#include "TROOT.h"
 #include "TFile.h"
-#include "TDirectoryFile.h"
 #include "TTree.h"
 
 int main(int argc, char **argv) {
@@ -22,10 +20,8 @@ int main(int argc, char **argv) {
     outfile.open(argv[2]);
 
     TFile *infile = new TFile(argv[1], "READ");
-    TDirectoryFile *dir;
-    infile->GetObject("aod2microtuple", dir);
     TTree *Events;
-    dir->GetObject("Events", Events);
+    infile->GetObject("aod2microtuple/Events", Events);
 
     size_t N = Events->GetEntries();
 
