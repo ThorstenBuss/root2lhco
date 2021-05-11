@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
                 << Jet_pt[k] << ' '
                 << Jet_mass[k] << ' '
                 << 0.0f << ' '
-                << (Jet_btag[i]>0.75? 1: 0) << ' '
+                << (Jet_btag[k]>0.75? 1: 0) << ' '
                 << 0.0f << ' '
                 << 0.0f << ' '
                 << 0.0f << ' '
