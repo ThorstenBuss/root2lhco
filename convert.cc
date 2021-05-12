@@ -141,21 +141,21 @@ int main(int argc, char **argv) {
         }
     }
 
-    delete Electron_pt;
-    delete Electron_eta;
-    delete Electron_phi;
-    delete Electron_charge;
+    delete[] Electron_pt;
+    delete[] Electron_eta;
+    delete[] Electron_phi;
+    delete[] Electron_charge;
 
-    delete Muon_pt;
-    delete Muon_eta;
-    delete Muon_phi;
-    delete Muon_charge;
+    delete[] Muon_pt;
+    delete[] Muon_eta;
+    delete[] Muon_phi;
+    delete[] Muon_charge;
 
-    delete Jet_pt;
-    delete Jet_eta;
-    delete Jet_phi;
-    delete Jet_mass;
-    delete Jet_btag;
+    delete[] Jet_pt;
+    delete[] Jet_eta;
+    delete[] Jet_phi;
+    delete[] Jet_mass;
+    delete[] Jet_btag;
 
     infile->Close();
     outfile.close();
